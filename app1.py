@@ -227,7 +227,7 @@ st.markdown("""
 
 
 /* ============================================================
-   ATMOSPHERIC PARTICLE MOTION
+   ERRATIC PARTICLE FIELD
 ============================================================ */
 
 .stApp > div::before {
@@ -236,48 +236,304 @@ st.markdown("""
 
     position: fixed;
 
-    inset: -20%;
+    inset: -30%;
 
     pointer-events: none;
 
     z-index: 1;
 
-    opacity: 0.65;
+    opacity: 0.9;
 
     background-image:
 
         radial-gradient(
             circle,
-            rgba(255, 70, 150, 0.75) 0 1px,
-            transparent 2px
+            rgba(255, 70, 150, 0.95) 0 2px,
+            transparent 4px
         ),
 
         radial-gradient(
             circle,
-            rgba(120, 70, 255, 0.7) 0 1px,
-            transparent 2px
+            rgba(130, 65, 255, 0.95) 0 2px,
+            transparent 4px
         ),
 
         radial-gradient(
             circle,
-            rgba(255, 40, 100, 0.6) 0 1px,
-            transparent 2px
+            rgba(255, 45, 110, 0.9) 0 1.5px,
+            transparent 4px
         ),
 
         radial-gradient(
             circle,
-            rgba(80, 100, 255, 0.65) 0 1px,
-            transparent 2px
+            rgba(70, 105, 255, 0.9) 0 2px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 150, 210, 0.8) 0 1px,
+            transparent 3px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(170, 100, 255, 0.85) 0 1.5px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 40, 130, 0.8) 0 2px,
+            transparent 5px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(80, 130, 255, 0.8) 0 1.5px,
+            transparent 4px
         );
 
     background-size:
-        150px 180px,
-        230px 210px,
-        310px 270px,
-        190px 260px;
+        105px 125px,
+        145px 170px,
+        190px 145px,
+        230px 190px,
+        125px 210px,
+        270px 160px,
+        175px 260px,
+        310px 220px;
 
     animation:
-        particlesDrift 25s linear infinite;
+        particleChaos1 7s linear infinite,
+        particleChaos2 11s ease-in-out infinite alternate;
+
+    filter:
+        drop-shadow(0 0 5px rgba(255,50,130,0.7))
+        drop-shadow(0 0 12px rgba(100,50,255,0.35));
+
+}
+
+
+/* Second independent particle layer */
+
+.stApp > div::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: -40%;
+
+    pointer-events: none;
+
+    z-index: 2;
+
+    opacity: 0.55;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            rgba(255, 80, 160, 0.9) 0 2px,
+            transparent 5px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(100, 80, 255, 0.9) 0 2px,
+            transparent 5px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 40, 100, 0.8) 0 1px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(130, 50, 255, 0.8) 0 1.5px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 180, 220, 0.75) 0 1px,
+            transparent 3px
+        );
+
+    background-size:
+        180px 230px,
+        260px 190px,
+        150px 310px,
+        330px 240px,
+        210px 170px;
+
+    animation:
+        particleChaos3 5s linear infinite,
+        particleChaos4 8s ease-in-out infinite alternate;
+
+    filter:
+        blur(0.2px)
+        drop-shadow(0 0 8px rgba(255,40,130,0.7));
+
+}
+
+
+/* ============================================================
+   CHAOTIC MOTION
+============================================================ */
+
+@keyframes particleChaos1 {
+
+    0% {
+        transform:
+            translate3d(-4%, -5%, 0)
+            rotate(0deg);
+    }
+
+    17% {
+        transform:
+            translate3d(7%, -13%, 0)
+            rotate(1deg);
+    }
+
+    31% {
+        transform:
+            translate3d(-9%, 4%, 0)
+            rotate(-2deg);
+    }
+
+    48% {
+        transform:
+            translate3d(13%, 9%, 0)
+            rotate(3deg);
+    }
+
+    64% {
+        transform:
+            translate3d(2%, -15%, 0)
+            rotate(-1deg);
+    }
+
+    79% {
+        transform:
+            translate3d(-14%, 8%, 0)
+            rotate(2deg);
+    }
+
+    100% {
+        transform:
+            translate3d(5%, 14%, 0)
+            rotate(-3deg);
+    }
+
+}
+
+
+@keyframes particleChaos2 {
+
+    0% {
+        transform:
+            scale(0.9)
+            skewX(-2deg);
+    }
+
+    27% {
+        transform:
+            scale(1.12)
+            skewX(3deg);
+    }
+
+    53% {
+        transform:
+            scale(0.82)
+            skewX(-4deg);
+    }
+
+    76% {
+        transform:
+            scale(1.2)
+            skewX(2deg);
+    }
+
+    100% {
+        transform:
+            scale(0.95)
+            skewX(-3deg);
+    }
+
+}
+
+
+@keyframes particleChaos3 {
+
+    0% {
+        transform:
+            translate3d(8%, 10%, 0)
+            rotate(0deg);
+    }
+
+    19% {
+        transform:
+            translate3d(-12%, 2%, 0)
+            rotate(-3deg);
+    }
+
+    37% {
+        transform:
+            translate3d(15%, -10%, 0)
+            rotate(4deg);
+    }
+
+    55% {
+        transform:
+            translate3d(-5%, 16%, 0)
+            rotate(-2deg);
+    }
+
+    73% {
+        transform:
+            translate3d(-17%, -7%, 0)
+            rotate(3deg);
+    }
+
+    100% {
+        transform:
+            translate3d(11%, 12%, 0)
+            rotate(-4deg);
+    }
+
+}
+
+
+@keyframes particleChaos4 {
+
+    0% {
+        opacity: 0.35;
+        transform: scale(0.8);
+    }
+
+    25% {
+        opacity: 0.8;
+        transform: scale(1.15);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.9);
+    }
+
+    75% {
+        opacity: 0.95;
+        transform: scale(1.25);
+    }
+
+    100% {
+        opacity: 0.5;
+        transform: scale(0.85);
+    }
 
 }
 
