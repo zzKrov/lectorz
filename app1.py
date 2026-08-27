@@ -24,37 +24,32 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* ============================================================
-   FONTS
-============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 
 /* ============================================================
-   ROOT
+   VARIABLES
 ============================================================ */
 
 :root {
 
-    --bg-black: #040208;
-    --bg-purple: #10051c;
-    --bg-red: #21040f;
-
+    --black: #030207;
+    --deep-purple: #0b0315;
+    --purple: #6326ff;
+    --violet: #9b42ff;
     --red: #ff174f;
-    --pink: #ff3b91;
-    --violet: #8a3ffc;
-    --blue: #394cff;
+    --pink: #ff3c91;
+    --blue: #3155ff;
 
-    --text-main: #f0e9e5;
-    --text-soft: #b8afb4;
-    --text-dim: #82777e;
+    --white: #f2edf1;
+    --soft: #b9afb8;
+    --dim: #817680;
 
 }
 
 
 /* ============================================================
-   GLOBAL APPLICATION
+   GLOBAL BACKGROUND
 ============================================================ */
 
 .stApp {
@@ -63,106 +58,115 @@ st.markdown("""
 
     overflow-x: hidden;
 
-    color: var(--text-main);
+    color: var(--white);
 
-    background-color: var(--bg-black);
+    background-color: var(--black);
 
     background-image:
 
-        /* atmospheric light */
+        /* large moving atmospheric lights */
+
         radial-gradient(
-            ellipse 45% 35% at 15% 15%,
-            rgba(76, 20, 190, 0.30),
+            ellipse 40% 35% at 5% 10%,
+            rgba(105, 25, 255, 0.30),
             transparent 70%
         ),
 
         radial-gradient(
-            ellipse 50% 40% at 85% 20%,
-            rgba(255, 20, 80, 0.22),
+            ellipse 45% 40% at 95% 15%,
+            rgba(255, 15, 85, 0.25),
             transparent 70%
         ),
 
         radial-gradient(
-            ellipse 45% 45% at 75% 85%,
-            rgba(90, 20, 210, 0.24),
+            ellipse 50% 45% at 80% 90%,
+            rgba(65, 40, 255, 0.25),
             transparent 70%
         ),
 
         radial-gradient(
-            ellipse 35% 40% at 20% 80%,
-            rgba(210, 15, 70, 0.16),
+            ellipse 40% 40% at 10% 85%,
+            rgba(255, 20, 100, 0.18),
             transparent 70%
         ),
 
-        /* irregular particles */
-        radial-gradient(
-            circle at 7% 18%,
-            rgba(255, 55, 130, 0.8) 0 1px,
-            transparent 2px
-        ),
+        /* glowing particles */
 
         radial-gradient(
-            circle at 17% 73%,
-            rgba(130, 80, 255, 0.75) 0 1px,
-            transparent 2px
-        ),
-
-        radial-gradient(
-            circle at 28% 31%,
-            rgba(255, 60, 140, 0.65) 0 2px,
+            circle at 8% 18%,
+            rgba(255, 40, 120, 0.95) 0 1px,
             transparent 3px
         ),
 
         radial-gradient(
-            circle at 39% 87%,
-            rgba(110, 100, 255, 0.7) 0 1px,
-            transparent 2px
+            circle at 15% 67%,
+            rgba(130, 70, 255, 0.9) 0 2px,
+            transparent 4px
         ),
 
         radial-gradient(
-            circle at 52% 14%,
-            rgba(255, 50, 120, 0.75) 0 1px,
-            transparent 2px
-        ),
-
-        radial-gradient(
-            circle at 63% 62%,
-            rgba(170, 70, 255, 0.65) 0 2px,
+            circle at 23% 38%,
+            rgba(255, 70, 150, 0.85) 0 1px,
             transparent 3px
         ),
 
         radial-gradient(
-            circle at 76% 38%,
-            rgba(255, 50, 110, 0.7) 0 1px,
-            transparent 2px
-        ),
-
-        radial-gradient(
-            circle at 88% 79%,
-            rgba(100, 100, 255, 0.7) 0 1px,
-            transparent 2px
-        ),
-
-        radial-gradient(
-            circle at 93% 12%,
-            rgba(255, 60, 130, 0.7) 0 2px,
+            circle at 31% 82%,
+            rgba(80, 100, 255, 0.9) 0 1px,
             transparent 3px
+        ),
+
+        radial-gradient(
+            circle at 43% 12%,
+            rgba(255, 40, 110, 0.9) 0 2px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            circle at 56% 73%,
+            rgba(155, 60, 255, 0.9) 0 1px,
+            transparent 3px
+        ),
+
+        radial-gradient(
+            circle at 67% 27%,
+            rgba(255, 45, 125, 0.9) 0 1px,
+            transparent 3px
+        ),
+
+        radial-gradient(
+            circle at 74% 65%,
+            rgba(75, 100, 255, 0.9) 0 2px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            circle at 87% 42%,
+            rgba(255, 45, 130, 0.85) 0 1px,
+            transparent 3px
+        ),
+
+        radial-gradient(
+            circle at 94% 82%,
+            rgba(130, 65, 255, 0.9) 0 2px,
+            transparent 4px
         ),
 
         /* base */
+
         linear-gradient(
             135deg,
-            #040208 0%,
-            #0d0414 35%,
-            #17040d 58%,
+            #030207 0%,
+            #100419 32%,
+            #18040e 58%,
             #07040f 100%
         );
 
     background-size:
-        180% 180%,
         170% 170%,
         180% 180%,
-        160% 160%,
+        180% 180%,
+        170% 170%,
         100% 100%,
         100% 100%,
         100% 100%,
@@ -175,141 +179,56 @@ st.markdown("""
         100% 100%,
         100% 100%;
 
-    background-position:
-        0% 0%,
-        100% 0%,
-        100% 100%,
-        0% 100%,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center;
-
     animation:
-        atmosphereMovement 18s ease-in-out infinite alternate;
+        atmosphere 16s ease-in-out infinite alternate;
 
 }
 
 
 /* ============================================================
-   FULL PAGE SCAN
-   PART OF THE BACKGROUND ITSELF
+   MOVING LIGHT
 ============================================================ */
 
-.stApp {
+.stApp::after {
 
-    background-image:
+    content: "";
 
-        linear-gradient(
-            to bottom,
-            transparent 0%,
-            transparent 44%,
-            rgba(255, 20, 85, 0.015) 46%,
-            rgba(255, 35, 105, 0.10) 49%,
-            rgba(145, 40, 255, 0.15) 50%,
-            rgba(255, 30, 90, 0.06) 51%,
-            transparent 56%,
-            transparent 100%
-        ),
+    position: fixed;
 
+    width: 55vw;
+
+    height: 55vw;
+
+    left: -20vw;
+
+    top: -15vw;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    border-radius: 50%;
+
+    background:
         radial-gradient(
-            ellipse 45% 35% at 15% 15%,
-            rgba(76, 20, 190, 0.30),
+            circle,
+            rgba(255, 30, 110, 0.09),
+            rgba(115, 30, 255, 0.05),
             transparent 70%
-        ),
-
-        radial-gradient(
-            ellipse 50% 40% at 85% 20%,
-            rgba(255, 20, 80, 0.22),
-            transparent 70%
-        ),
-
-        radial-gradient(
-            ellipse 45% 45% at 75% 85%,
-            rgba(90, 20, 210, 0.24),
-            transparent 70%
-        ),
-
-        radial-gradient(
-            ellipse 35% 40% at 20% 80%,
-            rgba(210, 15, 70, 0.16),
-            transparent 70%
-        ),
-
-        radial-gradient(circle at 7% 18%, rgba(255,55,130,0.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 17% 73%, rgba(130,80,255,0.75) 0 1px, transparent 2px),
-        radial-gradient(circle at 28% 31%, rgba(255,60,140,0.65) 0 2px, transparent 3px),
-        radial-gradient(circle at 39% 87%, rgba(110,100,255,0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 52% 14%, rgba(255,50,120,0.75) 0 1px, transparent 2px),
-        radial-gradient(circle at 63% 62%, rgba(170,70,255,0.65) 0 2px, transparent 3px),
-        radial-gradient(circle at 76% 38%, rgba(255,50,110,0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 88% 79%, rgba(100,100,255,0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 93% 12%, rgba(255,60,130,0.7) 0 2px, transparent 3px),
-
-        linear-gradient(
-            135deg,
-            #040208 0%,
-            #0d0414 35%,
-            #17040d 58%,
-            #07040f 100%
         );
 
-    background-size:
-        100% 220%,
-        180% 180%,
-        170% 170%,
-        180% 180%,
-        160% 160%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%;
-
-    background-position:
-        0 -120vh,
-        0% 0%,
-        100% 0%,
-        100% 100%,
-        0% 100%,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center,
-        center;
+    filter:
+        blur(20px);
 
     animation:
-        pageScan 7s linear infinite,
-        atmosphereMovement 20s ease-in-out infinite alternate;
+        lightOrbit 14s ease-in-out infinite alternate;
 
 }
 
 
 /* ============================================================
-   AMBIENT VIGNETTE
+   ATMOSPHERIC PARTICLE MOTION
 ============================================================ */
-
-.stApp > div {
-
-    position: relative;
-
-}
-
 
 .stApp > div::before {
 
@@ -317,24 +236,54 @@ st.markdown("""
 
     position: fixed;
 
-    inset: 0;
+    inset: -20%;
 
     pointer-events: none;
 
-    z-index: 0;
+    z-index: 1;
 
-    background:
+    opacity: 0.65;
+
+    background-image:
+
         radial-gradient(
-            ellipse at center,
-            transparent 35%,
-            rgba(0,0,0,0.30) 100%
+            circle,
+            rgba(255, 70, 150, 0.75) 0 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(120, 70, 255, 0.7) 0 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 40, 100, 0.6) 0 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(80, 100, 255, 0.65) 0 1px,
+            transparent 2px
         );
+
+    background-size:
+        150px 180px,
+        230px 210px,
+        310px 270px,
+        190px 260px;
+
+    animation:
+        particlesDrift 25s linear infinite;
 
 }
 
 
 /* ============================================================
-   CONTENT
+   CONTENT LAYER
 ============================================================ */
 
 .block-container {
@@ -347,7 +296,7 @@ st.markdown("""
 
     padding-top: 3rem;
 
-    padding-bottom: 5rem;
+    padding-bottom: 6rem;
 
 }
 
@@ -386,21 +335,18 @@ h1 {
         center;
 
     color:
-        #f4edf0 !important;
+        var(--white) !important;
 
     line-height:
         0.9 !important;
 
-    margin-bottom:
-        0.3rem !important;
-
     text-shadow:
-        0 0 12px rgba(255,50,120,0.25),
-        0 0 40px rgba(130,40,255,0.18),
-        0 0 80px rgba(255,20,80,0.08);
+        0 0 15px rgba(255,255,255,0.12),
+        0 0 35px rgba(255,30,110,0.25),
+        0 0 70px rgba(120,40,255,0.18);
 
     animation:
-        titleGlow 4s ease-in-out infinite alternate;
+        titlePulse 5s ease-in-out infinite alternate;
 
 }
 
@@ -413,7 +359,7 @@ h3 {
         serif !important;
 
     color:
-        #eee5e2 !important;
+        #eee7eb !important;
 
 }
 
@@ -421,7 +367,7 @@ h3 {
 .stApp p {
 
     color:
-        var(--text-soft);
+        var(--soft);
 
 }
 
@@ -438,9 +384,6 @@ h3 {
     font-size:
         0.72rem;
 
-    font-weight:
-        400;
-
     letter-spacing:
         0.28em;
 
@@ -448,7 +391,7 @@ h3 {
         uppercase;
 
     color:
-        #9d929a;
+        #a998a4;
 
     margin-top:
         0.8rem;
@@ -464,32 +407,26 @@ h3 {
     height:
         2px;
 
-    width:
-        100%;
-
-    margin-bottom:
-        2.5rem;
-
     background:
         linear-gradient(
             90deg,
             transparent,
-            #ff164f,
-            #933cff,
-            #ff3b91,
-            #ff164f,
+            #ff174f,
+            #8b35ff,
+            #ff3d91,
+            #3155ff,
             transparent
         );
 
     background-size:
-        300% 100%;
+        250% 100%;
 
     box-shadow:
-        0 0 15px rgba(255,30,100,0.5),
-        0 0 40px rgba(120,40,255,0.25);
+        0 0 15px rgba(255,25,100,0.65),
+        0 0 35px rgba(120,30,255,0.25);
 
     animation:
-        lineMovement 4s linear infinite;
+        lineFlow 4s linear infinite;
 
 }
 
@@ -503,51 +440,30 @@ section[data-testid="stSidebar"] {
     background:
         linear-gradient(
             180deg,
-            rgba(5,2,9,0.98),
-            rgba(15,3,16,0.97),
-            rgba(5,4,14,0.98)
+            rgba(4,2,9,0.98),
+            rgba(14,3,20,0.97),
+            rgba(4,3,12,0.98)
         );
 
     border-right:
-        1px solid rgba(255,35,100,0.20);
+        1px solid rgba(255,35,110,0.25);
 
     box-shadow:
-        10px 0 70px rgba(100,0,80,0.20);
+        12px 0 80px rgba(100,20,150,0.18);
 
 }
 
 
 section[data-testid="stSidebar"] h3 {
 
-    font-family:
-        "Cormorant Garamond",
-        serif !important;
-
-    font-size:
-        1.8rem !important;
-
     color:
-        #eee4e5 !important;
-
-}
-
-
-section[data-testid="stSidebar"] p {
-
-    font-size:
-        0.8rem;
-
-    line-height:
-        1.7;
-
-    color:
-        #92878f;
+        #eee6eb !important;
 
 }
 
 
 /* ============================================================
-   SECTION LABEL
+   LABELS
 ============================================================ */
 
 .section-label {
@@ -562,7 +478,7 @@ section[data-testid="stSidebar"] p {
         uppercase;
 
     color:
-        #bd7188;
+        #c47791;
 
     margin-bottom:
         0.7rem;
@@ -571,16 +487,16 @@ section[data-testid="stSidebar"] p {
 
 
 /* ============================================================
-   RADIO
+   RADIO INTERACTION
 ============================================================ */
 
 div[data-testid="stRadio"] label {
 
     color:
-        #bcb1b8 !important;
+        #bfb2bb !important;
 
     transition:
-        all 0.25s ease;
+        all 0.3s ease;
 
 }
 
@@ -588,13 +504,13 @@ div[data-testid="stRadio"] label {
 div[data-testid="stRadio"] label:hover {
 
     color:
-        #ff7197 !important;
+        #ff6b96 !important;
 
     transform:
-        translateX(5px);
+        translateX(7px);
 
     text-shadow:
-        0 0 12px rgba(255,40,110,0.65);
+        0 0 15px rgba(255,40,110,0.6);
 
 }
 
@@ -614,12 +530,12 @@ div[data-testid="stRadio"] label:hover {
     background:
         linear-gradient(
             145deg,
-            rgba(16,5,18,0.94),
-            rgba(5,6,17,0.96)
+            rgba(18,4,20,0.94),
+            rgba(5,5,18,0.96)
         );
 
     border:
-        1px solid rgba(255,40,105,0.25);
+        1px solid rgba(255,40,110,0.25);
 
     padding:
         12px;
@@ -628,13 +544,11 @@ div[data-testid="stRadio"] label:hover {
         5px;
 
     box-shadow:
-        0 25px 80px rgba(0,0,0,0.55),
-        0 0 45px rgba(130,20,100,0.10);
+        0 25px 90px rgba(0,0,0,0.6),
+        0 0 45px rgba(150,20,100,0.10);
 
     transition:
-        transform 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease;
+        all 0.4s cubic-bezier(.2,.8,.2,1);
 
 }
 
@@ -642,15 +556,16 @@ div[data-testid="stRadio"] label:hover {
 [data-testid="stCameraInput"]:hover {
 
     transform:
-        translateY(-5px);
+        translateY(-7px)
+        scale(1.01);
 
     border-color:
-        rgba(255,55,125,0.65);
+        rgba(255,70,140,0.75);
 
     box-shadow:
-        0 30px 100px rgba(0,0,0,0.65),
-        0 0 45px rgba(255,20,100,0.20),
-        0 0 90px rgba(100,40,255,0.12);
+        0 35px 110px rgba(0,0,0,0.7),
+        0 0 45px rgba(255,25,100,0.25),
+        0 0 100px rgba(100,40,255,0.13);
 
 }
 
@@ -664,16 +579,16 @@ div[data-testid="stRadio"] label:hover {
     background:
         linear-gradient(
             110deg,
-            #100711,
-            #1b0716,
-            #10071c
+            #100611,
+            #21071c,
+            #100820
         ) !important;
 
     color:
-        #eee6e7 !important;
+        #f0e7eb !important;
 
     border:
-        1px solid rgba(255,55,120,0.25) !important;
+        1px solid rgba(255,55,125,0.30) !important;
 
     border-radius:
         4px !important;
@@ -686,29 +601,21 @@ div[data-testid="stRadio"] label:hover {
 
 [data-testid="stCameraInput"] button:hover {
 
-    background:
-        linear-gradient(
-            110deg,
-            #270918,
-            #190b2d,
-            #270817
-        ) !important;
-
-    border-color:
-        rgba(255,65,135,0.8) !important;
-
-    box-shadow:
-        0 0 25px rgba(255,20,90,0.25),
-        0 0 45px rgba(100,40,255,0.15);
-
     transform:
         translateY(-2px);
+
+    border-color:
+        rgba(255,70,140,0.9) !important;
+
+    box-shadow:
+        0 0 25px rgba(255,30,100,0.35),
+        0 0 60px rgba(100,40,255,0.16);
 
 }
 
 
 /* ============================================================
-   RESULT CONTAINER
+   RESULT
 ============================================================ */
 
 .result-container {
@@ -725,12 +632,12 @@ div[data-testid="stRadio"] label:hover {
     background:
         linear-gradient(
             135deg,
-            rgba(25,5,20,0.94),
-            rgba(6,6,19,0.96)
+            rgba(27,5,23,0.94),
+            rgba(5,6,20,0.97)
         );
 
     border:
-        1px solid rgba(255,40,110,0.20);
+        1px solid rgba(255,45,115,0.22);
 
     border-left:
         3px solid #ff285f;
@@ -742,14 +649,14 @@ div[data-testid="stRadio"] label:hover {
         170px;
 
     border-radius:
-        3px;
+        4px;
 
     box-shadow:
-        0 25px 80px rgba(0,0,0,0.50),
-        0 0 40px rgba(150,20,90,0.10);
+        0 25px 80px rgba(0,0,0,0.55),
+        0 0 50px rgba(150,20,100,0.10);
 
     transition:
-        all 0.4s cubic-bezier(.2,.8,.2,1);
+        all 0.45s cubic-bezier(.2,.8,.2,1);
 
 }
 
@@ -757,20 +664,21 @@ div[data-testid="stRadio"] label:hover {
 .result-container:hover {
 
     transform:
-        translateY(-5px);
+        translateY(-7px)
+        scale(1.005);
 
     border-color:
-        rgba(255,55,125,0.55);
+        rgba(255,60,130,0.65);
 
     box-shadow:
-        0 30px 100px rgba(0,0,0,0.65),
-        0 0 50px rgba(255,30,100,0.14),
-        0 0 90px rgba(110,40,255,0.10);
+        0 35px 110px rgba(0,0,0,0.70),
+        0 0 55px rgba(255,25,100,0.20),
+        0 0 110px rgba(100,40,255,0.13);
 
 }
 
 
-/* moving light through result */
+/* moving reflection */
 
 .result-container::before {
 
@@ -780,17 +688,20 @@ div[data-testid="stRadio"] label:hover {
     position:
         absolute;
 
+    top:
+        -60%;
+
+    left:
+        -80%;
+
     width:
         45%;
 
     height:
-        200%;
+        220%;
 
-    top:
-        -50%;
-
-    left:
-        -60%;
+    transform:
+        rotate(20deg);
 
     pointer-events:
         none;
@@ -799,21 +710,18 @@ div[data-testid="stRadio"] label:hover {
         linear-gradient(
             90deg,
             transparent,
-            rgba(255,50,130,0.10),
-            rgba(140,60,255,0.08),
+            rgba(255,50,130,0.14),
+            rgba(120,50,255,0.12),
             transparent
         );
 
-    transform:
-        rotate(18deg);
-
     animation:
-        resultLight 5s ease-in-out infinite;
+        reflection 5s ease-in-out infinite;
 
 }
 
 
-/* corner illumination */
+/* corner glow */
 
 .result-container::after {
 
@@ -823,27 +731,36 @@ div[data-testid="stRadio"] label:hover {
     position:
         absolute;
 
-    top:
-        0;
-
     right:
-        0;
+        -50px;
+
+    top:
+        -50px;
 
     width:
-        120px;
+        150px;
 
     height:
-        120px;
+        150px;
+
+    border-radius:
+        50%;
 
     pointer-events:
         none;
 
     background:
         radial-gradient(
-            circle at top right,
-            rgba(255,40,120,0.13),
+            circle,
+            rgba(255,35,120,0.16),
             transparent 70%
         );
+
+    filter:
+        blur(5px);
+
+    animation:
+        cornerGlow 3s ease-in-out infinite alternate;
 
 }
 
@@ -871,13 +788,13 @@ div[data-testid="stRadio"] label:hover {
         1.65;
 
     color:
-        #eee4e0;
+        #eee5e6;
 
     white-space:
         pre-wrap;
 
     text-shadow:
-        0 0 15px rgba(255,255,255,0.06);
+        0 0 15px rgba(255,255,255,0.07);
 
 }
 
@@ -910,7 +827,7 @@ div[data-testid="stRadio"] label:hover {
         uppercase;
 
     color:
-        #a18a93;
+        #a58d98;
 
 }
 
@@ -931,17 +848,17 @@ div[data-testid="stRadio"] label:hover {
 
     box-shadow:
         0 0 8px #ff285f,
-        0 0 20px rgba(255,30,100,0.8),
-        0 0 40px rgba(255,20,80,0.35);
+        0 0 20px rgba(255,30,100,0.9),
+        0 0 40px rgba(255,20,80,0.4);
 
     animation:
-        statusPulse 1.5s ease-in-out infinite;
+        statusPulse 1.4s ease-in-out infinite;
 
 }
 
 
 /* ============================================================
-   INFORMATION CARDS
+   INFO CARDS
 ============================================================ */
 
 .info-card {
@@ -958,30 +875,49 @@ div[data-testid="stRadio"] label:hover {
     background:
         linear-gradient(
             145deg,
-            rgba(20,5,20,0.92),
-            rgba(6,7,18,0.94)
+            rgba(20,5,21,0.94),
+            rgba(5,7,19,0.96)
         );
 
     border:
-        1px solid rgba(255,40,105,0.14);
+        1px solid rgba(255,40,110,0.17);
 
     padding:
-        1.2rem;
+        1.3rem;
 
     text-align:
         center;
 
     border-radius:
-        3px;
+        4px;
 
     box-shadow:
-        0 15px 50px rgba(0,0,0,0.30);
+        0 18px 55px rgba(0,0,0,0.35);
 
     transition:
         all 0.35s cubic-bezier(.2,.8,.2,1);
 
 }
 
+
+.info-card:hover {
+
+    transform:
+        translateY(-9px)
+        scale(1.035);
+
+    border-color:
+        rgba(255,65,135,0.65);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,0.55),
+        0 0 35px rgba(255,30,100,0.20),
+        0 0 75px rgba(100,40,255,0.13);
+
+}
+
+
+/* animated border */
 
 .info-card::before {
 
@@ -991,51 +927,90 @@ div[data-testid="stRadio"] label:hover {
     position:
         absolute;
 
-    width:
-        180%;
+    inset:
+        -2px;
 
-    height:
-        2px;
-
-    left:
-        -40%;
-
-    top:
-        0;
+    z-index:
+        -1;
 
     background:
-        linear-gradient(
-            90deg,
+        conic-gradient(
+            from 0deg,
             transparent,
-            #ff286b,
-            #8c3cff,
+            #ff174f,
+            transparent,
+            #873cff,
             transparent
         );
 
     animation:
-        cardScan 4s linear infinite;
+        borderRotate 4s linear infinite;
+
+    opacity:
+        0;
+
+    transition:
+        opacity 0.3s ease;
 
 }
 
 
-.info-card:hover {
+.info-card:hover::before {
+
+    opacity:
+        1;
+
+}
+
+
+/* card light */
+
+.info-card::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        80px;
+
+    height:
+        80px;
+
+    left:
+        50%;
+
+    top:
+        50%;
 
     transform:
-        translateY(-8px)
-        scale(1.025);
+        translate(-50%, -50%);
 
-    border-color:
-        rgba(255,55,125,0.45);
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,35,120,0.12),
+            transparent 70%
+        );
 
-    box-shadow:
-        0 25px 70px rgba(0,0,0,0.55),
-        0 0 35px rgba(255,30,100,0.13),
-        0 0 70px rgba(100,40,255,0.08);
+    pointer-events:
+        none;
+
+    animation:
+        cardPulse 3s ease-in-out infinite;
 
 }
 
 
 .info-number {
+
+    position:
+        relative;
+
+    z-index:
+        5;
 
     font-family:
         "Cormorant Garamond",
@@ -1045,15 +1020,21 @@ div[data-testid="stRadio"] label:hover {
         2rem;
 
     color:
-        #f1dce4;
+        #f2dfe7;
 
     text-shadow:
-        0 0 15px rgba(255,40,120,0.35);
+        0 0 15px rgba(255,40,120,0.4);
 
 }
 
 
 .info-label {
+
+    position:
+        relative;
+
+    z-index:
+        5;
 
     font-size:
         0.6rem;
@@ -1065,13 +1046,13 @@ div[data-testid="stRadio"] label:hover {
         uppercase;
 
     color:
-        #8c7c84;
+        #917f89;
 
 }
 
 
 /* ============================================================
-   DIVIDER
+   DIVIDERS
 ============================================================ */
 
 hr {
@@ -1086,13 +1067,13 @@ hr {
         linear-gradient(
             90deg,
             transparent,
-            rgba(255,35,100,0.35),
-            rgba(110,50,255,0.30),
+            rgba(255,30,100,0.4),
+            rgba(100,50,255,0.4),
             transparent
         ) !important;
 
-    margin:
-        2.5rem 0 !important;
+    box-shadow:
+        0 0 10px rgba(255,30,100,0.12);
 
 }
 
@@ -1101,12 +1082,11 @@ hr {
    ANIMATIONS
 ============================================================ */
 
-@keyframes pageScan {
+@keyframes atmosphere {
 
     0% {
 
         background-position:
-            0 -120vh,
             0% 0%,
             100% 0%,
             100% 100%,
@@ -1119,84 +1099,132 @@ hr {
             center,
             center,
             center,
-            center;
-
-    }
-
-    100% {
-
-        background-position:
-            0 220vh,
-            20% 10%,
-            80% 15%,
-            80% 90%,
-            10% 90%,
-            center,
-            center,
-            center,
-            center,
-            center,
-            center,
             center,
             center,
             center;
-
-    }
-
-}
-
-
-@keyframes atmosphereMovement {
-
-    0% {
 
         filter:
             saturate(1)
-            brightness(0.92);
+            brightness(0.90);
 
     }
 
     50% {
 
         filter:
-            saturate(1.35)
+            saturate(1.4)
             brightness(1.05);
 
     }
 
     100% {
 
+        background-position:
+            20% 20%,
+            80% 15%,
+            80% 80%,
+            15% 85%,
+            center,
+            center,
+            center,
+            center,
+            center,
+            center,
+            center,
+            center,
+            center,
+            center,
+            center;
+
         filter:
-            saturate(1.15)
-            brightness(0.96);
+            saturate(1.2)
+            brightness(0.98);
 
     }
 
 }
 
 
-@keyframes titleGlow {
+@keyframes lightOrbit {
 
-    from {
+    0% {
 
-        text-shadow:
-            0 0 10px rgba(255,40,110,0.20),
-            0 0 35px rgba(120,40,255,0.12);
+        transform:
+            translate(0, 0)
+            scale(0.9);
 
     }
 
-    to {
+    50% {
 
-        text-shadow:
-            0 0 20px rgba(255,40,110,0.40),
-            0 0 55px rgba(120,40,255,0.25);
+        transform:
+            translate(45vw, 20vh)
+            scale(1.2);
+
+    }
+
+    100% {
+
+        transform:
+            translate(70vw, 55vh)
+            scale(0.85);
 
     }
 
 }
 
 
-@keyframes lineMovement {
+@keyframes particlesDrift {
+
+    0% {
+
+        transform:
+            translate3d(-2%, -2%, 0)
+            rotate(0deg);
+
+    }
+
+    50% {
+
+        transform:
+            translate3d(3%, -5%, 0)
+            rotate(2deg);
+
+    }
+
+    100% {
+
+        transform:
+            translate3d(-4%, 4%, 0)
+            rotate(-2deg);
+
+    }
+
+}
+
+
+@keyframes titlePulse {
+
+    0% {
+
+        text-shadow:
+            0 0 12px rgba(255,30,110,0.20),
+            0 0 30px rgba(110,40,255,0.10);
+
+    }
+
+    100% {
+
+        text-shadow:
+            0 0 22px rgba(255,40,120,0.42),
+            0 0 60px rgba(120,40,255,0.25);
+
+    }
+
+}
+
+
+@keyframes lineFlow {
 
     0% {
 
@@ -1208,33 +1236,33 @@ hr {
     100% {
 
         background-position:
-            300% 50%;
+            250% 50%;
 
     }
 
 }
 
 
-@keyframes resultLight {
+@keyframes reflection {
 
     0% {
 
         left:
-            -60%;
+            -80%;
 
         opacity:
             0;
 
     }
 
-    25% {
+    20% {
 
         opacity:
             1;
 
     }
 
-    75% {
+    70% {
 
         opacity:
             1;
@@ -1244,7 +1272,7 @@ hr {
     100% {
 
         left:
-            120%;
+            130%;
 
         opacity:
             0;
@@ -1254,19 +1282,25 @@ hr {
 }
 
 
-@keyframes cardScan {
+@keyframes cornerGlow {
 
-    0% {
+    from {
+
+        opacity:
+            0.4;
 
         transform:
-            translateX(-60%);
+            scale(0.8);
 
     }
 
-    100% {
+    to {
+
+        opacity:
+            1;
 
         transform:
-            translateX(60%);
+            scale(1.25);
 
     }
 
@@ -1279,17 +1313,17 @@ hr {
     100% {
 
         transform:
-            scale(0.75);
+            scale(0.7);
 
         opacity:
-            0.55;
+            0.5;
 
     }
 
     50% {
 
         transform:
-            scale(1.4);
+            scale(1.5);
 
         opacity:
             1;
@@ -1299,8 +1333,55 @@ hr {
 }
 
 
+@keyframes borderRotate {
+
+    from {
+
+        transform:
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+@keyframes cardPulse {
+
+    0%,
+    100% {
+
+        opacity:
+            0.2;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.7);
+
+    }
+
+    50% {
+
+        opacity:
+            0.7;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.8);
+
+    }
+
+}
+
+
 /* ============================================================
-   STREAMLIT BUTTONS
+   BUTTONS
 ============================================================ */
 
 .stButton > button {
@@ -1309,21 +1390,21 @@ hr {
         linear-gradient(
             110deg,
             #100611,
-            #1c0718,
-            #0e071c
+            #23081c,
+            #0d0820
         ) !important;
 
     color:
-        #eee5e7 !important;
+        #f0e7eb !important;
 
     border:
-        1px solid rgba(255,45,115,0.25) !important;
+        1px solid rgba(255,45,115,0.30) !important;
 
     border-radius:
         4px !important;
 
     transition:
-        all 0.25s ease !important;
+        all 0.3s ease !important;
 
 }
 
@@ -1331,14 +1412,15 @@ hr {
 .stButton > button:hover {
 
     transform:
-        translateY(-3px);
+        translateY(-3px)
+        scale(1.015);
 
     border-color:
-        rgba(255,55,125,0.75) !important;
+        rgba(255,70,140,0.85) !important;
 
     box-shadow:
-        0 0 25px rgba(255,30,100,0.20),
-        0 0 50px rgba(100,40,255,0.10);
+        0 0 25px rgba(255,30,100,0.28),
+        0 0 60px rgba(100,40,255,0.15);
 
 }
 
@@ -1363,26 +1445,30 @@ hr {
     background:
         linear-gradient(
             145deg,
-            rgba(16,5,18,0.92),
-            rgba(6,7,18,0.95)
+            rgba(18,5,20,0.94),
+            rgba(5,6,18,0.96)
         ) !important;
 
     border:
-        1px solid rgba(255,40,110,0.20) !important;
+        1px solid rgba(255,40,110,0.22) !important;
 
     transition:
-        all 0.3s ease;
+        all 0.35s ease;
 
 }
 
 
 [data-testid="stFileUploader"] section:hover {
 
+    transform:
+        translateY(-5px);
+
     border-color:
-        rgba(255,50,120,0.65) !important;
+        rgba(255,65,135,0.75) !important;
 
     box-shadow:
-        0 0 35px rgba(255,30,100,0.12);
+        0 20px 70px rgba(0,0,0,0.55),
+        0 0 35px rgba(255,30,100,0.15);
 
 }
 
@@ -1394,7 +1480,10 @@ hr {
 .stCheckbox label {
 
     color:
-        #bcb0b7 !important;
+        #bcb0b8 !important;
+
+    transition:
+        all 0.25s ease;
 
 }
 
@@ -1408,7 +1497,7 @@ hr {
 
 
 /* ============================================================
-   RESPONSIVE
+   MOBILE
 ============================================================ */
 
 @media (max-width: 768px) {
@@ -1532,10 +1621,6 @@ img_file_buffer = st.camera_input("Toma una Foto")
 
 if img_file_buffer is not None:
 
-    # --------------------------------------------------------
-    # READ IMAGE
-    # --------------------------------------------------------
-
     bytes_data = img_file_buffer.getvalue()
 
     cv2_img = cv2.imdecode(
@@ -1547,10 +1632,6 @@ if img_file_buffer is not None:
     )
 
 
-    # --------------------------------------------------------
-    # FILTER
-    # --------------------------------------------------------
-
     if filtro == "Con Filtro":
 
         cv2_img = cv2.bitwise_not(
@@ -1558,28 +1639,16 @@ if img_file_buffer is not None:
         )
 
 
-    # --------------------------------------------------------
-    # RGB
-    # --------------------------------------------------------
-
     img_rgb = cv2.cvtColor(
         cv2_img,
         cv2.COLOR_BGR2RGB
     )
 
 
-    # --------------------------------------------------------
-    # OCR
-    # --------------------------------------------------------
-
     text = pytesseract.image_to_string(
         img_rgb
     )
 
-
-    # --------------------------------------------------------
-    # STATISTICS
-    # --------------------------------------------------------
 
     clean_text = text.strip()
 
@@ -1589,7 +1658,7 @@ if img_file_buffer is not None:
 
 
     # ========================================================
-    # RESULT
+    # RESULT HEADER
     # ========================================================
 
     st.markdown("---")
@@ -1624,7 +1693,7 @@ if img_file_buffer is not None:
 
 
     # ========================================================
-    # SAFE OCR TEXT
+    # SAFE TEXT
     # ========================================================
 
     safe_text = (
