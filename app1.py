@@ -526,7 +526,7 @@ with col_res:
             render_clean_html(
                 f"""
                 <div class="info-card">
-                    <div class="info-number">{modo_etiqueta}</div>
+                    <div class="info-number" style="font-size: 1.35rem;">{modo_etiqueta}</div>
                     <div class="info-label">Procesamiento</div>
                 </div>
                 """
