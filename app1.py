@@ -22,38 +22,44 @@ def render_clean_html(html_str: str):
     st.markdown(clean, unsafe_allow_html=True)
 
 # ============================================================
-# ESTILOS VISUALES: FONDO LÍQUIDO KROV, BRILLO INTEGRAL Y CONTROLES
+# ESTILOS VISUALES: DERIVA FLUIDA VISIBLE, CÁMARA +50% Y SHINE TOTAL
 # ============================================================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root {
-    --black: #040207;
+    --black: #05020a;
     --red: #ff174f;
     --pink: #ff3c91;
     --purple: #7928ca;
     --violet: #9b42ff;
+    --blue: #2563eb;
     --white: #f3edf2;
     --soft: #b9afb8;
 }
 
-/* Supresión absoluta de cualquier elemento residual de sidebar */
 [data-testid="stSidebar"], section[data-testid="stSidebar"] {
     display: none !important;
 }
 
-html, body, [data-testid="stAppViewContainer"], .stApp {
-    background-color: var(--black) !important;
+/* Transparencia total en Streamlit para que los orbes en movimiento sean 100% visibles */
+html, body, [data-testid="stAppViewContainer"], .stApp, section.main, .block-container {
+    background: transparent !important;
+    background-color: transparent !important;
     color: var(--white) !important;
     font-family: 'Inter', sans-serif !important;
     overflow-x: hidden;
 }
 
+body {
+    background-color: #040207 !important;
+}
+
 [data-testid="stHeader"] { background: transparent !important; }
 
 /* ============================================================
-   1. FONDO FLUIDO LÍQUIDO ACELERADO POR GPU (SIN PUNTOS / CERO LAG)
+   1. ORBES LÍQUIDOS EN DERIVA CONTINUA VISIBLE (ACELERADOS POR GPU)
 ============================================================ */
 .krov-fluid-canvas {
     position: fixed;
@@ -61,71 +67,90 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
-    background: radial-gradient(circle at 50% 50%, #0a0314 0%, #040207 100%);
+    background: radial-gradient(circle at 50% 50%, #090314 0%, #040207 100%);
 }
 
-.krov-orb {
+.krov-drift-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(85px);
-    opacity: 0.44;
+    filter: blur(80px);
+    opacity: 0.52;
     will-change: transform;
+    pointer-events: none;
 }
 
-.krov-orb-1 {
-    width: 620px;
-    height: 620px;
-    background: radial-gradient(circle, var(--red) 0%, var(--purple) 55%, transparent 75%);
-    top: -12%;
-    left: -6%;
-    animation: krovDrift1 16s ease-in-out infinite alternate;
+.orb-1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--red) 0%, var(--purple) 60%, transparent 75%);
+    top: -10%;
+    left: 5%;
+    animation: driftMotion1 20s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
-.krov-orb-2 {
-    width: 660px;
-    height: 660px;
-    background: radial-gradient(circle, var(--purple) 0%, var(--pink) 50%, transparent 75%);
-    bottom: -16%;
-    right: -8%;
-    animation: krovDrift2 20s ease-in-out infinite alternate;
+.orb-2 {
+    width: 640px;
+    height: 640px;
+    background: radial-gradient(circle, var(--violet) 0%, var(--pink) 55%, transparent 75%);
+    bottom: -15%;
+    right: 5%;
+    animation: driftMotion2 24s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
-.krov-orb-3 {
+.orb-3 {
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, var(--violet) 0%, var(--red) 50%, transparent 70%);
-    top: 40%;
-    left: 45%;
-    transform: translate(-50%, -50%);
-    animation: krovDrift3 24s ease-in-out infinite alternate;
+    background: radial-gradient(circle, var(--blue) 0%, var(--red) 50%, transparent 75%);
+    top: 35%;
+    right: 30%;
+    animation: driftMotion3 28s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
-@keyframes krovDrift1 {
+.orb-4 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, var(--pink) 0%, var(--purple) 50%, transparent 75%);
+    bottom: 20%;
+    left: 10%;
+    animation: driftMotion4 22s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+@keyframes driftMotion1 {
     0% { transform: translate3d(0, 0, 0) scale(1); }
-    50% { transform: translate3d(90px, 70px, 0) scale(1.15); }
-    100% { transform: translate3d(-50px, 120px, 0) scale(0.92); }
+    33% { transform: translate3d(180px, -60px, 0) scale(1.18); }
+    66% { transform: translate3d(240px, 140px, 0) scale(0.92); }
+    100% { transform: translate3d(-80px, 120px, 0) scale(1.05); }
 }
 
-@keyframes krovDrift2 {
+@keyframes driftMotion2 {
+    0% { transform: translate3d(0, 0, 0) scale(1.05); }
+    33% { transform: translate3d(-190px, 110px, 0) scale(0.95); }
+    66% { transform: translate3d(-110px, -160px, 0) scale(1.22); }
+    100% { transform: translate3d(130px, -80px, 0) scale(1); }
+}
+
+@keyframes driftMotion3 {
+    0% { transform: translate3d(0, 0, 0) scale(0.92); }
+    33% { transform: translate3d(-160px, 170px, 0) scale(1.15); }
+    66% { transform: translate3d(180px, -120px, 0) scale(1.08); }
+    100% { transform: translate3d(-70px, -80px, 0) scale(0.95); }
+}
+
+@keyframes driftMotion4 {
     0% { transform: translate3d(0, 0, 0) scale(1); }
-    50% { transform: translate3d(-100px, -80px, 0) scale(1.12); }
-    100% { transform: translate3d(70px, -60px, 0) scale(0.9); }
-}
-
-@keyframes krovDrift3 {
-    0% { transform: translate(-50%, -50%) scale(0.9); }
-    50% { transform: translate(-35%, -65%) scale(1.2); }
-    100% { transform: translate(-65%, -35%) scale(0.95); }
+    33% { transform: translate3d(140px, 150px, 0) scale(1.16); }
+    66% { transform: translate3d(-130px, -140px, 0) scale(0.88); }
+    100% { transform: translate3d(70px, -50px, 0) scale(1.06); }
 }
 
 /* ============================================================
-   2. TIPOGRAFÍA Y ESTRUCTURA KROV INDUSTRIES
+   2. TIPOGRAFÍA Y ESTRUCTURA KROV
 ============================================================ */
 .block-container {
     position: relative;
     z-index: 10;
-    max-width: 1150px;
-    padding-top: 2rem;
+    max-width: 1250px;
+    padding-top: 1.8rem;
     padding-bottom: 4rem;
 }
 
@@ -141,19 +166,19 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
 
 h1 {
     font-family: "Cormorant Garamond", serif !important;
-    font-size: clamp(2.8rem, 5.5vw, 4.8rem) !important;
+    font-size: clamp(2.8rem, 5.5vw, 4.6rem) !important;
     font-weight: 500 !important;
     letter-spacing: 0.025em;
     text-align: center;
     color: var(--white) !important;
     line-height: 0.95 !important;
-    text-shadow: 0 0 25px rgba(255,23,79,0.35), 0 0 60px rgba(121,40,202,0.25);
+    text-shadow: 0 0 25px rgba(255,23,79,0.4), 0 0 60px rgba(121,40,202,0.3);
     animation: titlePulse 5s ease-in-out infinite alternate;
 }
 
 @keyframes titlePulse {
-    0% { text-shadow: 0 0 15px rgba(255,23,79,0.25), 0 0 35px rgba(121,40,202,0.15); }
-    100% { text-shadow: 0 0 30px rgba(255,23,79,0.5), 0 0 70px rgba(121,40,202,0.35); }
+    0% { text-shadow: 0 0 15px rgba(255,23,79,0.3), 0 0 35px rgba(121,40,202,0.2); }
+    100% { text-shadow: 0 0 30px rgba(255,23,79,0.6), 0 0 70px rgba(121,40,202,0.4); }
 }
 
 .header-subtitle {
@@ -163,7 +188,7 @@ h1 {
     text-transform: uppercase;
     color: #a998a4;
     margin-top: 0.6rem;
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.2rem;
 }
 
 .header-line {
@@ -172,7 +197,7 @@ h1 {
     background-size: 250% 100%;
     box-shadow: 0 0 15px rgba(255,23,79,0.6);
     animation: lineFlow 5s linear infinite;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.6rem;
 }
 
 @keyframes lineFlow {
@@ -181,58 +206,49 @@ h1 {
 }
 
 /* ============================================================
-   3. BARRA DE CONTROL INTEGRADA EN EL SITIO
-============================================================ */
-.control-bar {
-    background: linear-gradient(145deg, rgba(18, 5, 26, 0.9), rgba(8, 2, 14, 0.95));
-    border: 1px solid rgba(255, 23, 79, 0.28);
-    border-radius: 8px;
-    padding: 12px 20px;
-    margin-bottom: 1.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,23,79,0.06);
-}
-
-/* ============================================================
-   4. CÁMARA Y CONTENEDOR DE TEXTO
+   3. CÁMARA 50% MÁS GRANDE (AMPLIADA A 720x420px)
 ============================================================ */
 [data-testid="stCameraInput"] {
     position: relative;
     z-index: 20;
-    background: rgba(18, 5, 24, 0.85);
-    border: 1px solid rgba(255, 23, 79, 0.3);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 25px rgba(255,23,79,0.12);
+    background: rgba(18, 5, 26, 0.88);
+    border: 1px solid rgba(255, 23, 79, 0.35);
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 25px rgba(255,23,79,0.15);
+    max-width: 720px !important;
+    width: 100% !important;
+    margin: 0 auto;
     transition: all 0.35s ease;
 }
 
 [data-testid="stCameraInput"]:hover {
     transform: translateY(-3px);
-    border-color: rgba(255, 60, 145, 0.7);
-    box-shadow: 0 25px 75px rgba(0,0,0,0.7), 0 0 35px rgba(255,23,79,0.25);
+    border-color: rgba(255, 60, 145, 0.75);
+    box-shadow: 0 25px 75px rgba(0,0,0,0.8), 0 0 35px rgba(255,23,79,0.3);
 }
 
+[data-testid="stCameraInput"] video {
+    max-height: 420px !important;
+    height: 400px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+}
+
+/* ============================================================
+   4. CAJA DE RESULTADO Y ESTADO
+============================================================ */
 .result-container {
     position: relative;
     z-index: 20;
-    background: linear-gradient(145deg, rgba(22, 6, 30, 0.9), rgba(8, 2, 14, 0.96));
+    background: linear-gradient(145deg, rgba(22, 6, 32, 0.92), rgba(8, 2, 14, 0.96));
     border: 1px solid rgba(255, 23, 79, 0.3);
     border-left: 4px solid var(--red);
-    padding: 1.8rem 2rem;
-    min-height: 160px;
+    padding: 1.6rem 2rem;
+    min-height: 180px;
     border-radius: 8px;
     backdrop-filter: blur(16px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.55), inset 0 0 25px rgba(255,23,79,0.08);
-    transition: all 0.3s ease;
-}
-
-.result-container:hover {
-    border-color: rgba(255, 60, 145, 0.7);
-    box-shadow: 0 25px 65px rgba(0, 0, 0, 0.75), 0 0 35px rgba(255, 23, 79, 0.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 0 25px rgba(255,23,79,0.08);
 }
 
 .result-text {
@@ -270,23 +286,23 @@ h1 {
 }
 
 /* ============================================================
-   5. TARJETAS INFERIORES: BRILLO INTEGRAL EN TODA LA SUPERFICIE (SHINE HOVER)
+   5. TARJETAS CON BRILLO INTEGRAL EN TODA LA SUPERFICIE (SHINE HOVER)
 ============================================================ */
 .info-card {
     position: relative;
-    background: linear-gradient(145deg, rgba(20, 7, 28, 0.88), rgba(9, 3, 15, 0.95));
+    background: linear-gradient(145deg, rgba(20, 7, 30, 0.9), rgba(9, 3, 16, 0.96));
     border: 1px solid rgba(255, 23, 79, 0.28);
     border-top: 2px solid var(--red);
     padding: 1.5rem 1rem;
     text-align: center;
     border-radius: 8px;
     backdrop-filter: blur(16px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(255, 23, 79, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(255, 23, 79, 0.08);
     overflow: hidden;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Haz de luz especular diagonal que barre toda la superficie de la tarjeta al interactuar */
+/* Haz especular diagonal que cruza toda la cara interna de la tarjeta */
 .info-card::before {
     content: "";
     position: absolute;
@@ -318,8 +334,8 @@ h1 {
     box-shadow:
         0 20px 50px rgba(0, 0, 0, 0.85),
         0 0 35px rgba(255, 23, 79, 0.45),
-        inset 0 0 25px rgba(255, 23, 79, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        inset 0 0 25px rgba(255, 23, 79, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .info-number {
@@ -345,23 +361,19 @@ h1 {
 }
 </style>
 
-<!-- Atmósfera fluida continua Krov Industries (GPU) -->
+<!-- Orbes líquidos en deriva continua asimétrica -->
 <div class="krov-fluid-canvas">
-    <div class="krov-orb krov-orb-1"></div>
-    <div class="krov-orb krov-orb-2"></div>
-    <div class="krov-orb krov-orb-3"></div>
+    <div class="krov-drift-orb orb-1"></div>
+    <div class="krov-drift-orb orb-2"></div>
+    <div class="krov-drift-orb orb-3"></div>
+    <div class="krov-drift-orb orb-4"></div>
 </div>
 """, unsafe_allow_html=True)
 
 # ============================================================
-# CABECERA KROV INDUSTRIES
+# CABECERA
 # ============================================================
-render_clean_html(
-    """
-    <div class="brand-signature">Krov Industries · Óptica</div>
-    """
-)
-
+render_clean_html('<div class="brand-signature">Krov Industries · Óptica</div>')
 st.title("Reconocimiento óptico de caracteres")
 
 render_clean_html(
@@ -374,22 +386,22 @@ render_clean_html(
 )
 
 # ============================================================
-# PANEL DE CONTROL INTEGRADO EN EL SITIO (SIN SIDEBAR)
+# CONTROLES INTEGRADOS EN LA PÁGINA (SIN SIDEBAR)
 # ============================================================
-col_ctrl1, col_ctrl2 = st.columns([1.5, 1], gap="medium")
+col_ctrl1, col_ctrl2 = st.columns([1.6, 1], gap="medium")
 
 with col_ctrl1:
     filtro = st.radio(
-        "Filtro óptico de contraste:",
-        ("Sin Filtro (Original)", "Con Filtro (Inversión negativa)"),
+        "Modo de preprocesamiento:",
+        ("Automático (detecta fondos oscuros)", "Original", "Inversión forzada"),
         horizontal=True
     )
 
 with col_ctrl2:
     render_clean_html(
         """
-        <div style="font-family:'JetBrains Mono'; font-size:0.75rem; color:#a4919b; padding-top:8px;">
-            ESTADO: <span style="color:#ff174f; font-weight:700;">CANAL ÓPTICO DISPONIBLE</span>
+        <div style="font-family:'JetBrains Mono'; font-size:0.75rem; color:#a4919b; padding-top:10px;">
+            CANAL ÓPTICO: <span style="color:#ff174f; font-weight:700;">ALTA PRECISIÓN 2× CLAHE</span>
         </div>
         """
     )
@@ -397,30 +409,64 @@ with col_ctrl2:
 st.write("")
 
 # ============================================================
-# ENTRADA DE CÁMARA Y SALIDA DE TEXTO
+# PIPELINE DE PROCESAMIENTO OCR ROBUSTO
 # ============================================================
-col_cam, col_res = st.columns([1, 1.2], gap="large")
+def procesar_ocr_avanzado(cv_image, modo_filtro):
+    # 1. Escalado 2x cúbico para elevar el tamaño del texto capturado por webcam
+    h, w = cv_image.shape[:2]
+    scaled = cv2.resize(cv_image, (int(w * 2.0), int(h * 2.0)), interpolation=cv2.INTER_CUBIC)
+    gray = cv2.cvtColor(scaled, cv2.COLOR_BGR2GRAY)
+
+    # 2. Detección automática de pantallas en modo oscuro (letras claras sobre fondo negro)
+    brillo_medio = np.mean(gray)
+    es_fondo_oscuro = brillo_medio < 120
+
+    if modo_filtro == "Inversión forzada" or (modo_filtro.startswith("Automático") and es_fondo_oscuro):
+        # Tesseract requiere texto oscuro sobre fondo claro
+        invertido = cv2.bitwise_not(gray)
+    else:
+        invertido = gray
+
+    # 3. Filtrado bilateral para preservar bordes tipográficos reduciendo ruido
+    denoised = cv2.bilateralFilter(invertido, 7, 50, 50)
+
+    # 4. Ecualización adaptativa de contraste (CLAHE)
+    clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
+    enhanced = clahe.apply(denoised)
+
+    # 5. Doble pasada de OCR (PSM 3 automático y PSM 6 bloque uniforme)
+    try:
+        t1 = pytesseract.image_to_string(enhanced, config="--psm 3").strip()
+    except Exception:
+        t1 = ""
+
+    try:
+        t2 = pytesseract.image_to_string(enhanced, config="--psm 6").strip()
+    except Exception:
+        t2 = ""
+
+    # Se selecciona la pasada con mayor información válida
+    resultado = t2 if len(t2.split()) > len(t1.split()) else t1
+    return resultado
+
+# ============================================================
+# CÁMARA (AMPLIADA 50%) Y SALIDA
+# ============================================================
+col_cam, col_res = st.columns([1.35, 1], gap="large")
 
 with col_cam:
-    render_clean_html('<div class="section-label">Captura en Vivo</div>')
+    render_clean_html('<div class="section-label">Visor de Captura (720px)</div>')
     img_file_buffer = st.camera_input("Toma una Foto", label_visibility="collapsed")
 
 with col_res:
-    render_clean_html('<div class="section-label">Texto Reconocido</div>')
+    render_clean_html('<div class="section-label">Texto Extraído</div>')
 
     if img_file_buffer is not None:
         bytes_data = img_file_buffer.getvalue()
         cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
 
-        if "Con Filtro" in filtro:
-            cv2_img = cv2.bitwise_not(cv2_img)
-
-        img_rgb = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
-
-        try:
-            text = pytesseract.image_to_string(img_rgb)
-        except Exception:
-            text = ""
+        with st.spinner("Decodificando caracteres con CLAHE y 2× de resolución..."):
+            text = procesar_ocr_avanzado(cv2_img, filtro)
 
         clean_text = text.strip()
         character_count = len(clean_text)
@@ -442,7 +488,7 @@ with col_res:
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
         )
-        display_text = safe_text if clean_text else "No se encontró texto legible en la captura realizada."
+        display_text = safe_text if clean_text else "No se encontró texto legible. Ajusta el ángulo o enfoca con mayor claridad."
 
         render_clean_html(
             f"""
@@ -476,12 +522,12 @@ with col_res:
             )
 
         with col3:
-            method = "Invertido" if "Con Filtro" in filtro else "Original"
+            modo_etiqueta = "Auto CLAHE" if filtro.startswith("Automático") else ("Invertido" if "Inversión" in filtro else "Original")
             render_clean_html(
                 f"""
                 <div class="info-card">
-                    <div class="info-number">{method}</div>
-                    <div class="info-label">Modo</div>
+                    <div class="info-number">{modo_etiqueta}</div>
+                    <div class="info-label">Procesamiento</div>
                 </div>
                 """
             )
@@ -489,7 +535,7 @@ with col_res:
         render_clean_html(
             """
             <div class="result-container" style="display:flex; justify-content:center; align-items:center; text-align:center; color:#94a3b8;">
-                Captura una imagen con la cámara web para analizar los caracteres.
+                Apunta la cámara a un texto o pantalla para procesar los caracteres.
             </div>
             """
         )
