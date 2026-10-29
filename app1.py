@@ -1,11 +1,20 @@
+import os
+import io
+import base64
 import streamlit as st
 import cv2
 import numpy as np
-import pytesseract
 from PIL import Image
 
+# Intentar importar pytesseract (opcional si se usa Visión IA)
+try:
+    import pytesseract
+    TESSERACT_DISPONIBLE = True
+except ImportError:
+    TESSERACT_DISPONIBLE = False
+
 # ============================================================
-# CONFIGURACIÓN GENERAL (SIN SIDEBAR)
+# CONFIGURACIÓN GENERAL
 # ============================================================
 st.set_page_config(
     page_title="Reconocimiento Óptico // Krov Industries",
@@ -30,8 +39,6 @@ st.markdown("""
     --red: #ff174f;
     --pink: #ff3c91;
     --purple: #7928ca;
-    --violet: #9b42ff;
-    --blue: #2563eb;
     --white: #f3edf2;
 }
 
@@ -61,13 +68,13 @@ body { background-color: #040207 !important; }
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
-    opacity: 0.52;
+    opacity: 0.45;
     will-change: transform;
     pointer-events: none;
 }
 
 .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, var(--red) 0%, var(--purple) 60%, transparent 75%); top: -10%; left: 5%; }
-.orb-2 { width: 640px; height: 640px; background: radial-gradient(circle, var(--violet) 0%, var(--pink) 55%, transparent 75%); bottom: -15%; right: 5%; }
+.orb-2 { width: 640px; height: 640px; background: radial-gradient(circle, var(--purple) 0%, var(--pink) 55%, transparent 75%); bottom: -15%; right: 5%; }
 
 .block-container {
     position: relative;
@@ -89,9 +96,8 @@ body { background-color: #040207 !important; }
 
 h1 {
     font-family: "Cormorant Garamond", serif !important;
-    font-size: clamp(2.8rem, 5.5vw, 4.6rem) !important;
+    font-size: clamp(2.6rem, 5vw, 4.2rem) !important;
     font-weight: 500 !important;
-    letter-spacing: 0.025em;
     text-align: center;
     color: var(--white) !important;
     line-height: 0.95 !important;
@@ -143,10 +149,10 @@ h1 {
 }
 
 .result-text {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 1.45rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.15rem;
     line-height: 1.6;
-    color: #eee5e6;
+    color: #00ff88;
     white-space: pre-wrap;
 }
 
@@ -181,90 +187,102 @@ h1 {
 </div>
 """, unsafe_allow_html=True)
 
-render_clean_html('<div class="brand-signature">Krov Industries · Óptica</div>')
-st.title("Reconocimiento óptico de caracteres")
-render_clean_html('<div class="header-subtitle">Pipeline Adaptativo Multi-Estrategia · OCR Optimizado</div><div class="header-line"></div>')
+render_clean_html('<div class="brand-signature">Krov Industries · Reconocimiento Óptico</div>')
+st.title("Reconocimiento de caracteres")
+render_clean_html('<div class="header-subtitle">Extracción Óptica de Alta Fidelidad en Escenas Reales</div><div class="header-line"></div>')
 
 # ============================================================
-# CONTROLES
+# SELECCIÓN DE MOTOR
 # ============================================================
-col_ctrl1, col_ctrl2 = st.columns([1.5, 1], gap="medium")
+c_ctrl1, c_ctrl2 = st.columns([1.4, 1], gap="medium")
 
-with col_ctrl1:
-    idioma = st.selectbox("Idiomas de reconocimiento:", ["spa+eng (Español + Inglés)", "spa (Sólo Español)", "eng (Sólo Inglés)"])
-    lang_code = "spa+eng" if "spa+eng" in idioma else ("spa" if "spa" in idioma else "eng")
+with c_ctrl1:
+    motor = st.radio(
+        "Motor de Inferencia Óptica:",
+        ["⚡ Visión Neuronal IA (GPT-4o-mini · Recomendado para pantallas/fotos)", "▣ Tesseract Local con Filtro Antirruido"],
+        horizontal=True
+    )
 
-with col_ctrl2:
-    ver_debug = st.checkbox("Mostrar imagen preprocesada (Diagnóstico)", value=False)
+with c_ctrl2:
+    api_key_input = st.text_input(
+        "Clave de API de OpenAI (para Visión Neuronal):",
+        type="password",
+        value=os.environ.get("OPENAI_API_KEY", ""),
+        placeholder="sk-..."
+    )
+    if api_key_input:
+        os.environ["OPENAI_API_KEY"] = api_key_input
 
 st.write("")
 
 # ============================================================
-# PIPELINE MULTI-ESTRATEGIA ROBUSTO PARA FOTOS
+# MOTORES DE RECONOCIMIENTO
 # ============================================================
-def pipeline_ocr_robusto(cv_image, lang="spa+eng"):
-    # 1. Escalar 1.5x para aumentar definición de fuentes pequeñas
-    h, w = cv_image.shape[:2]
-    interp = cv2.INTER_CUBIC if (w < 1200) else cv2.INTER_AREA
-    img_scaled = cv2.resize(cv_image, (int(w * 1.5), int(h * 1.5)), interpolation=interp)
-    gray = cv2.cvtColor(img_scaled, cv2.COLOR_BGR2GRAY)
+def ocr_vision_ia(cv_image, api_key):
+    """Reconoce texto en imágenes complejas mediante el modelo de visión."""
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key)
 
-    # 2. Corrección de iluminación por morfología Top-Hat (elimina sombras y brillos)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 25))
-    tophat = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, kernel)
-    blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
-    norm = cv2.add(gray, tophat)
-    norm = cv2.subtract(norm, blackhat)
+    _, buffer = cv2.imencode(".jpg", cv_image, [cv2.IMWRITE_JPEG_QUALITY, 90])
+    b64_image = base64.b64encode(buffer).decode("utf-8")
 
-    # 3. Denoising suave
-    blurred = cv2.GaussianBlur(norm, (3, 3), 0)
-
-    # 4. Estrategia A: Umbral adaptativo de Gauss (especial para fotos con sombras irregulares)
-    bin_adaptive = cv2.adaptiveThreshold(
-        blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 11
+    prompt = (
+        "Transcribe de forma exacta y literal todo el texto visible en esta imagen (incluyendo números, "
+        "fechas, horas, nombres de red o marcas). "
+        "No agregues comentarios ni explicaciones, responde únicamente con el texto transcrito exactamente como aparece."
     )
 
-    # 5. Estrategia B: Otsu Binarization (especial para texto con iluminación uniforme)
-    _, bin_otsu = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{
+            "role": "user",
+            "content": [
+                {"type": "text", "text": prompt},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64_image}"}}
+            ]
+        }],
+        max_tokens=300,
+        temperature=0.0
+    )
+    return resp.choices[0].message.content.strip()
 
-    # Invertir si el fondo quedó negro en lugar de blanco
-    if np.mean(bin_adaptive) < 127:
-        bin_adaptive = cv2.bitwise_not(bin_adaptive)
-    if np.mean(bin_otsu) < 127:
-        bin_otsu = cv2.bitwise_not(bin_otsu)
+def ocr_tesseract_limpio(cv_image):
+    """Ejecuta Tesseract filtrando estrictamente el ruido y artefactos."""
+    if not TESSERACT_DISPONIBLE:
+        return "Tesseract no está instalado en este entorno."
 
-    candidatos = []
-    configs = [
-        ("--oem 3 --psm 3", bin_adaptive),
-        ("--oem 3 --psm 6", bin_adaptive),
-        ("--oem 3 --psm 11", bin_adaptive),
-        ("--oem 3 --psm 6", bin_otsu),
-    ]
+    gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 
-    for cfg, img_target in configs:
-        try:
-            texto = pytesseract.image_to_string(img_target, lang=lang, config=cfg).strip()
-            if len(texto) > 0:
-                candidatos.append(texto)
-        except Exception:
-            pass
+    # Detección de fondo oscuro usando solo el cuadrante central
+    h, w = gray.shape
+    centro = gray[int(h*0.2):int(h*0.8), int(w*0.2):int(w*0.8)]
+    if np.mean(centro) < 120:
+        gray = cv2.bitwise_not(gray)
 
-    # Seleccionar la inferencia con mayor cantidad de palabras válidas
-    if candidatos:
-        candidatos.sort(key=lambda t: len(t.split()), reverse=True)
-        resultado = candidatos[0]
-    else:
-        resultado = ""
+    # Filtro Otsu directo (evita la estática del filtro adaptativo)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    _, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    return resultado, bin_adaptive
+    # Filtrar mediante image_to_data: descartar palabras con confianza menor a 60%
+    data = pytesseract.image_to_data(thresh, lang="spa+eng", config="--psm 6", output_type=pytesseract.Output.DICT)
+
+    palabras_validas = []
+    for i in range(len(data["text"])):
+        conf = int(data["conf"][i])
+        palabra = data["text"][i].strip()
+        # Se descarta cualquier predicción dudosa que genere caracteres aleatorios
+        if conf > 60 and len(palabra) > 1:
+            palabras_validas.append(palabra)
+
+    return " ".join(palabras_validas)
 
 # ============================================================
-# CÁMARA Y RESULTADOS
+# CÁMARA Y PROCESAMIENTO
 # ============================================================
-col_cam, col_res = st.columns([1.35, 1], gap="large")
+col_cam, col_res = st.columns([1.3, 1], gap="large")
 
 with col_cam:
-    render_clean_html('<div class="section-label" style="font-family:JetBrains Mono; font-size:0.75rem; color:#a4919b; margin-bottom:8px;">VISOR ÓPTICO</div>')
+    render_clean_html('<div class="section-label" style="font-family:JetBrains Mono; font-size:0.75rem; color:#a4919b; margin-bottom:8px;">VISOR DE CÁMARA</div>')
     img_file_buffer = st.camera_input("Capturar", label_visibility="collapsed")
 
 with col_res:
@@ -274,19 +292,27 @@ with col_res:
         bytes_data = img_file_buffer.getvalue()
         cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
 
-        with st.spinner("Procesando imagen con umbralización adaptativa y diccionario multilingüe..."):
-            text, processed_preview = pipeline_ocr_robusto(cv2_img, lang=lang_code)
+        texto_resultado = ""
 
-        clean_text = text.strip()
-        word_count = len(clean_text.split())
-        char_count = len(clean_text)
+        if "Visión" in motor:
+            key_actual = os.environ.get("OPENAI_API_KEY", "").strip()
+            if not key_actual:
+                st.warning("Introduce tu clave de API de OpenAI para usar el reconocimiento neuronal.")
+            else:
+                with st.spinner("Decodificando texto mediante red de visión neural..."):
+                    try:
+                        texto_resultado = ocr_vision_ia(cv2_img, key_actual)
+                    except Exception as e:
+                        st.error(f"Error con la API de Visión: {e}")
+        else:
+            with st.spinner("Procesando con Tesseract y filtro de confianza > 60%..."):
+                try:
+                    texto_resultado = ocr_tesseract_limpio(cv2_img)
+                except Exception as e:
+                    st.error(f"Error en Tesseract: {e}")
 
-        safe_text = (
-            text.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-        )
-        display_text = safe_text if clean_text else "No se detectaron caracteres legibles. Asegura buena iluminación y enfoca el texto de frente."
+        clean_text = texto_resultado.strip()
+        display_text = clean_text if clean_text else "No se detectó texto con suficiente nitidez."
 
         render_clean_html(
             f"""
@@ -297,23 +323,16 @@ with col_res:
         )
 
         st.write("")
-        c1, c2, c3 = st.columns(3)
+        c1, c2 = st.columns(2)
         with c1:
-            render_clean_html(f'<div class="info-card"><div class="info-number">{word_count}</div><div class="info-label">Palabras</div></div>')
+            render_clean_html(f'<div class="info-card"><div class="info-number">{len(clean_text.split())}</div><div class="info-label">Palabras</div></div>')
         with c2:
-            render_clean_html(f'<div class="info-card"><div class="info-number">{char_count}</div><div class="info-label">Caracteres</div></div>')
-        with c3:
-            render_clean_html(f'<div class="info-card"><div class="info-number" style="font-size:1.3rem;">{lang_code}</div><div class="info-label">Idiomas</div></div>')
-
-        if ver_debug:
-            st.write("")
-            st.caption("Visión interna de Tesseract (después de eliminar sombras y binarizar):")
-            st.image(processed_preview, channels="GRAY", use_container_width=True)
+            render_clean_html(f'<div class="info-card"><div class="info-number">{len(clean_text)}</div><div class="info-label">Caracteres</div></div>')
     else:
         render_clean_html(
             """
             <div class="result-container" style="display:flex; justify-content:center; align-items:center; text-align:center; color:#94a3b8;">
-                Apunta la cámara a un texto impreso o pantalla y captura la foto.
+                Apunta la cámara a un texto o pantalla y pulsa "Toma una Foto".
             </div>
             """
         )
