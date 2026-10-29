@@ -251,4 +251,36 @@ with col_res:
         bytes_data = img_file_buffer.getvalue()
         cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
 
-        with st.spinn
+        with st.spinner("Procesando matriz óptica..."):
+            texto, preview_img = ejecutar_ocr_limpio(cv2_img, crop_center=enfocar_centro)
+
+        clean_text = texto.strip()
+        display_text = clean_text if clean_text else "No se detectó texto legible. Acerca un poco más el objetivo al centro."
+
+        render_clean_html(
+            f"""
+            <div class="result-container">
+                <div class="result-text">{display_text}</div>
+            </div>
+            """
+        )
+
+        st.write("")
+        c1, c2 = st.columns(2)
+        with c1:
+            render_clean_html(f'<div class="info-card"><div class="info-number">{len(clean_text.split())}</div><div class="info-label">Palabras</div></div>')
+        with c2:
+            render_clean_html(f'<div class="info-card"><div class="info-number">{len(clean_text)}</div><div class="info-label">Caracteres</div></div>')
+
+        if ver_recorte:
+            st.write("")
+            st.caption("Imagen entregada directamente al motor Tesseract:")
+            st.image(preview_img, channels="GRAY", use_container_width=True)
+    else:
+        render_clean_html(
+            """
+            <div class="result-container" style="display:flex; justify-content:center; align-items:center; text-align:center; color:#94a3b8;">
+                Centra el texto en el visor y pulsa "Toma una Foto".
+            </div>
+            """
+        )
