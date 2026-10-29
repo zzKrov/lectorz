@@ -1,8 +1,20 @@
 import streamlit as st
 import cv2
 import numpy as np
-import pytesseract
 from PIL import Image
+
+# Verificación de motores locales instalados
+try:
+    import easyocr
+    EASYOCR_INSTALADO = True
+except ImportError:
+    EASYOCR_INSTALADO = False
+
+try:
+    import pytesseract
+    TESSERACT_INSTALADO = True
+except ImportError:
+    TESSERACT_INSTALADO = False
 
 # ============================================================
 # CONFIGURACIÓN GENERAL
@@ -19,7 +31,7 @@ def render_clean_html(html_str: str):
     st.markdown(clean, unsafe_allow_html=True)
 
 # ============================================================
-# ESTILOS VISUALES KROV
+# ESTILOS VISUALES MONOLÍTICOS KROV
 # ============================================================
 st.markdown("""
 <style>
@@ -71,7 +83,7 @@ body { background-color: #040207 !important; }
     position: relative;
     z-index: 10;
     max-width: 1250px;
-    padding-top: 1.8rem;
+    padding-top: 2rem;
     padding-bottom: 4rem;
 }
 
@@ -102,13 +114,13 @@ h1 {
     text-transform: uppercase;
     color: #a998a4;
     margin-top: 0.6rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.6rem;
 }
 
 .header-line {
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--red), var(--purple), var(--pink), transparent);
-    margin-bottom: 1.6rem;
+    margin-bottom: 2rem;
 }
 
 [data-testid="stCameraInput"] {
@@ -132,8 +144,8 @@ h1 {
     background: linear-gradient(145deg, rgba(22, 6, 32, 0.92), rgba(8, 2, 14, 0.96));
     border: 1px solid rgba(255, 23, 79, 0.3);
     border-left: 4px solid var(--red);
-    padding: 1.6rem 2rem;
-    min-height: 180px;
+    padding: 1.8rem 2rem;
+    min-height: 220px;
     border-radius: 8px;
     backdrop-filter: blur(16px);
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
@@ -142,7 +154,7 @@ h1 {
 .result-text {
     font-family: "JetBrains Mono", monospace;
     font-size: 1.15rem;
-    line-height: 1.6;
+    line-height: 1.7;
     color: #00ff88;
     white-space: pre-wrap;
 }
@@ -180,63 +192,79 @@ h1 {
 
 render_clean_html('<div class="brand-signature">Krov Industries · Óptica Pura</div>')
 st.title("Reconocimiento óptico de caracteres")
-render_clean_html('<div class="header-subtitle">Motor Local de Inferencia Óptica Directa</div><div class="header-line"></div>')
+render_clean_html('<div class="header-subtitle">Motor Monolítico Local · Sin Dependencias Externas</div><div class="header-line"></div>')
 
 # ============================================================
-# CONTROL DIRECTO
+# MOTOR LOCAL MONOLÍTICO
 # ============================================================
-c_opt1, c_opt2 = st.columns([1.5, 1])
-with c_opt1:
-    enfocar_centro = st.checkbox("Recortar enfoque central al 75% (Ignora el fondo y la habitación)", value=True)
-with c_opt2:
-    ver_recorte = st.checkbox("Ver imagen que lee el motor", value=False)
+@st.cache_resource
+def get_easyocr_reader():
+    if EASYOCR_INSTALADO:
+        return easyocr.Reader(['es', 'en'], gpu=False)
+    return None
 
-st.write("")
+def motor_ocr_monolitico(cv_image):
+    """
+    Procesamiento transparente: si EasyOCR está instalado se usa como motor primario;
+    de lo contrario, se ejecuta Tesseract optimizado dimensionalmente.
+    """
+    # 1. INTENTO CON MOTOR NEURONAL (Si easyocr está en requirements.txt)
+    reader = get_easyocr_reader()
+    if reader is not None:
+        try:
+            rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+            resultados = reader.readtext(rgb, detail=0, paragraph=True)
+            if resultados:
+                return "\n".join(resultados).strip()
+        except Exception:
+            pass
 
-# ============================================================
-# MOTOR OCR LIMPIO (SIN FILTROS DESTRUCTIVOS)
-# ============================================================
-def ejecutar_ocr_limpio(cv_image, crop_center=True):
-    # 1. Recorte opcional del área de interés (elimina techo, cabeza y fondo)
-    if crop_center:
-        h, w = cv_image.shape[:2]
-        y1, y2 = int(h * 0.12), int(h * 0.88)
-        x1, x2 = int(w * 0.12), int(w * 0.88)
-        img = cv_image[y1:y2, x1:x2]
+    # 2. MOTOR TESSERACT AUTO-ADAPTATIVO
+    if not TESSERACT_INSTALADO:
+        return "Error: No se encontró un motor de OCR instalado en el sistema."
+
+    # Corrección dimensional: elevar la altura de las letras minúsculas (de 6px a ~20px)
+    h, w = cv_image.shape[:2]
+    target_dim = 1600.0
+    if max(h, w) < target_dim:
+        factor = target_dim / float(max(h, w))
+        img_proc = cv2.resize(cv_image, (int(w * factor), int(h * factor)), interpolation=cv2.INTER_CUBIC)
     else:
-        img = cv_image
+        img_proc = cv_image
 
-    # 2. Conversión a escala de grises
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img_proc, cv2.COLOR_BGR2GRAY)
 
-    # 3. Normalización Min-Max de contraste (estira el rango dinámico sin binarizar ni pixelar)
-    norm = cv2.normalize(gray, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
+    # Enfoque óptico unsharp (recupera nitidez en bordes degradados por la lente webcam)
+    gaussian = cv2.GaussianBlur(gray, (0, 0), 2.0)
+    sharp = cv2.addWeighted(gray, 1.6, gaussian, -0.6, 0)
 
-    # 4. Tesseract con PSM 3 (detección automática real de bloques) y OEM 3 (LSTM moderno)
-    cfg = "--oem 3 --psm 3"
-    
-    # Pasada A: Normal (texto oscuro sobre fondo claro, como páginas web o documentos)
-    texto_a = pytesseract.image_to_string(norm, lang="spa+eng", config=cfg).strip()
+    # Modos de segmentación para escenas y pantallas
+    configs = ["--oem 3 --psm 11", "--oem 3 --psm 3"]
+    sharp_inv = cv2.bitwise_not(sharp)
 
-    # Pasada B: Invertida (texto claro sobre fondo oscuro, como el reloj del teléfono)
-    norm_inv = cv2.bitwise_not(norm)
-    texto_b = pytesseract.image_to_string(norm_inv, lang="spa+eng", config=cfg).strip()
+    mejor_texto = ""
+    max_score = 0
 
-    # Criterio de selección: mayor densidad de caracteres alfanuméricos válidos
-    score_a = sum(1 for c in texto_a if c.isalnum())
-    score_b = sum(1 for c in texto_b if c.isalnum())
+    # Doble pasada automática: polaridad normal e invertida
+    for img_variante in (sharp, sharp_inv):
+        for cfg in configs:
+            try:
+                raw = pytesseract.image_to_string(img_variante, lang="spa+eng", config=cfg).strip()
+                # Filtrar líneas vacías y evaluar densidad alfanumérica real
+                lineas = [l.strip() for l in raw.splitlines() if any(c.isalnum() for c in l)]
+                texto_candidato = "\n".join(lineas)
+                score = sum(1 for c in texto_candidato if c.isalnum())
 
-    if score_a >= score_b:
-        resultado = texto_a
-        preview = norm
-    else:
-        resultado = texto_b
-        preview = norm_inv
+                if score > max_score:
+                    max_score = score
+                    mejor_texto = texto_candidato
+            except Exception:
+                pass
 
-    return resultado, preview
+    return mejor_texto
 
 # ============================================================
-# CAPTURA Y VISUALIZACIÓN
+# CAPTURA Y SALIDA
 # ============================================================
 col_cam, col_res = st.columns([1.3, 1], gap="large")
 
@@ -251,11 +279,11 @@ with col_res:
         bytes_data = img_file_buffer.getvalue()
         cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
 
-        with st.spinner("Procesando matriz óptica..."):
-            texto, preview_img = ejecutar_ocr_limpio(cv2_img, crop_center=enfocar_centro)
+        with st.spinner("Decodificando texto en matriz local..."):
+            texto_extraido = motor_ocr_monolitico(cv2_img)
 
-        clean_text = texto.strip()
-        display_text = clean_text if clean_text else "No se detectó texto legible. Acerca un poco más el objetivo al centro."
+        clean_text = texto_extraido.strip()
+        display_text = clean_text if clean_text else "No se detectó texto con suficiente nitidez."
 
         render_clean_html(
             f"""
@@ -271,16 +299,11 @@ with col_res:
             render_clean_html(f'<div class="info-card"><div class="info-number">{len(clean_text.split())}</div><div class="info-label">Palabras</div></div>')
         with c2:
             render_clean_html(f'<div class="info-card"><div class="info-number">{len(clean_text)}</div><div class="info-label">Caracteres</div></div>')
-
-        if ver_recorte:
-            st.write("")
-            st.caption("Imagen entregada directamente al motor Tesseract:")
-            st.image(preview_img, channels="GRAY", use_container_width=True)
     else:
         render_clean_html(
             """
             <div class="result-container" style="display:flex; justify-content:center; align-items:center; text-align:center; color:#94a3b8;">
-                Centra el texto en el visor y pulsa "Toma una Foto".
+                Apunta la cámara a un texto o pantalla y pulsa "Toma una Foto".
             </div>
             """
         )
